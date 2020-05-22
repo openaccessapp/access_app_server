@@ -28,12 +28,10 @@ mongoose.connect(dbConfig.url, {
     process.exit();
 });
 
-// define a simple route
 app.get('/', (req, res) => {
     res.json({"message": "Welcome to Access App. CHANGEEE."});
 });
 
-// Require Notes routes
 require('./app/routes/access.routes.js')(app);
 
 // listen for requests

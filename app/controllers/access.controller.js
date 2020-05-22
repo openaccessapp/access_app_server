@@ -1,14 +1,29 @@
 const Access = require('../models/access.model.js');
 
+const ObjectID = require('mongodb').ObjectID;
+
 exports.create = (req, res) => {
-    if(!req.body.dateTime) {
+    if(!req.body.fromDate) {
         return res.status(400).send({
-            message: "dateTime can not be empty"
+            message: "fromDate can not be empty"
         });
     }
 
+    if(!req.body.toDate) {
+        return res.status(400).send({
+            message: "toDate can not be empty"
+        });
+    }
+
+    var id = new ObjectID()
+    if (req.body._id) {
+        id = req.body._id
+    }
+
     const access = new Access({
-        dateTime: req.body.dateTime
+        fromDate: req.body.fromDate,
+        toDate: req.body.toDate,
+        _id: id
     });
 
     access.save()
@@ -54,14 +69,22 @@ exports.findOne = (req, res) => {
 };
 
 exports.update = (req, res) => {
-    if(!req.body.dateTime) {
+    if(!req.body.fromDate) {
         return res.status(400).send({
-            message: "dateTime can not be empty"
+            message: "fromDate can not be empty"
         });
     }
 
+    if(!req.body.toDate) {
+        return res.status(400).send({
+            message: "toDate can not be empty"
+        });
+    }
+
+
     Access.findByIdAndUpdate(req.params.placeId, {
-        dateTime: req.body.dateTime
+        fromDate: req.body.fromDate,
+        toDate: req.body.toDate
     }, {new: true})
     .then(data => {
         if(!data) {
@@ -83,7 +106,7 @@ exports.update = (req, res) => {
 };
 
 exports.delete = (req, res) => {
-    Access.findByIdAndRemove(req.params.noteId)
+    Access.findByIdAndRemove(req.params.placeId)
     .then(data => {
         if(!data) {
             return res.status(404).send({

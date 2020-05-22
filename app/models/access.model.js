@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
 
 const dateTimeSchema = mongoose.Schema({
-    dateTime: String
+    _id: String,
+    fromDate: String,
+    toDate: String
 }, {
     timestamps: true
 });
