@@ -83,7 +83,7 @@ exports.update = (req, res) => {
 };
 
 exports.delete = (req, res) => {
-    Note.findByIdAndRemove(req.params.noteId)
+    Access.findByIdAndRemove(req.params.noteId)
     .then(data => {
         if(!data) {
             return res.status(404).send({
