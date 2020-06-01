@@ -4,7 +4,8 @@
   "description": "App to access places.",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
   },
   "author": "dm@auxcode.com, aa@auxcode.com",
   "license": "ISC",
@@ -12,6 +13,10 @@
     "body-parser": "^1.19.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "mongoose": "^5.9.15"
+    "moment": "^2.26.0",
+    "mongoose": "^5.9.15",
+    "nanoid": "^3.1.9",
+    "swagger-jsdoc": "^4.0.0",
+    "swagger-ui-express": "^4.1.4"
   }
 }

@@ -1,5 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+
+const swaggerUi = require('swagger-ui-express');
+const swaggerJSDoc = require('swagger-jsdoc');
+
 require('dotenv').config();
 
 // create express app
@@ -33,6 +37,21 @@ app.get('/', (req, res) => {
 });
 
 require('./app/routes/access.routes.js')(app);
+
+//initialise swagger
+const options = {
+    definition: {
+        swagger: '2.0', // Specification (optional, defaults to swagger: '2.0')
+        info: {
+            title: 'Access Swagger', // Title (required)
+            version: '1.0.0', // Version (required)
+        },
+    },
+    // Path to the API docs
+    apis: ['./app/routes/**.*'],
+};
+const swaggerSpec = swaggerJSDoc(options)
+app.use('/api', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // listen for requests
 const PORT = process.env.PORT || 8080
