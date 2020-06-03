@@ -125,7 +125,7 @@ exports.changeFavourite = async (req, res) => {
   if (visitor.favourites.includes(req.params.placeId)) {
     for (let i = 0; i < visitor.favourites.length; i++) {
       if (visitor.favourites[i] === req.params.placeId) {
-        visitor.favourites.splice(i, 1);
+        visitor.favourites.splice(i, 1)
         break
       }
     }
@@ -141,16 +141,31 @@ exports.visit = async (req, res) => {
     return res.status(404).send({ message: 'Invalid data!' })
   }
 
-  let people = req.body.visitors
+  if (req.body.visitors > 7 || req.body.visitors < 1)
+    return res.status(400).send({message: 'Visitors must be between 1 and 7'});
+
+  let slot = await Slot.findById(req.body.slotId);
+
+  if (!slot) return res.status(404).send({ message: 'Slot not found' });
+
+  let people = req.body.visitors;
 
   let booking = await Booking.findOne({ slotId: req.body.slotId, visitorId: req.params.visitorId })
+
   if (booking) {
-    if (booking.friendsNumber !== req.body.visitors) {
-      people -= booking.friendsNumber
+    people -= booking.friendsNumber
+    if (people !== 0) {
+      if (slot.occupiedSlots += people > slot.maxVisitors)
+        return res.status(400).send({ message: 'Not enough place on this slot!' })
+
       booking.friendsNumber = req.body.visitors
       await booking.save()
     }
+
   } else {
+    if (slot.occupiedSlots += people > slot.maxVisitors)
+      return res.status(400).send({ message: 'Not enough place on this slot!' })
+
     new Booking({
       _id: nanoid.nanoid(),
       slotId: req.body.slotId,
@@ -159,7 +174,6 @@ exports.visit = async (req, res) => {
     }).save()
   }
 
-  let slot = await Slot.findById(req.body.slotId)
   slot.occupiedSlots += people
   await slot.save()
 

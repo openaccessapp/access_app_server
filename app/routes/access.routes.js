@@ -197,6 +197,10 @@ module.exports = (app) => {
    *      responses:
    *        204:
    *          description: ok
+   *        400:
+   *          description: Slot is full | Visitors more than 7 or less than 1
+   *        404:
+   *          description: Invalid data
    */
   app.post('/api/user/:visitorId/visit', access.visit)
 
