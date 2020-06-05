@@ -43,7 +43,7 @@ exports.fillDatabase = async () => {
     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer malesuada ante non nisl viverra eleifend. Sed consectetur justo quis lectus ullamcorper, et convallis augue ultricies. Donec felis orci, imperdiet eget pharetra sit amet, commodo vehicula lorem. Maecenas tristique gravida nisi. Quisque et velit eget dolor tempor dictum vel at purus.',
     url: 'https://central-park.com',
     address: 'Central Park, London',
-    coordinates: '@51.5293175,0.0505747,17z'
+    coordinates: '51.5293175,0.0505747'
   }).save()
 
   new Place({
@@ -54,7 +54,7 @@ exports.fillDatabase = async () => {
     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer malesuada ante non nisl viverra eleifend. Sed consectetur justo quis lectus ullamcorper, et convallis augue ultricies. Donec felis orci, imperdiet eget pharetra sit amet, commodo vehicula lorem. Maecenas tristique gravida nisi. Quisque et velit eget dolor tempor dictum vel at purus.',
     url: 'https://history-museum.com',
     address: 'History Museum, London',
-    coordinates: '@51.496715,-0.1785559,17z'
+    coordinates: '51.496715,-0.1785559'
   }).save()
 
   new Place({
@@ -65,7 +65,7 @@ exports.fillDatabase = async () => {
     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer malesuada ante non nisl viverra eleifend. Sed consectetur justo quis lectus ullamcorper, et convallis augue ultricies. Donec felis orci, imperdiet eget pharetra sit amet, commodo vehicula lorem. Maecenas tristique gravida nisi. Quisque et velit eget dolor tempor dictum vel at purus.',
     url: 'https://south-park.com',
     address: 'South Park, London',
-    coordinates: '@51.4693849,-0.1970964,17z'
+    coordinates: '51.4693849,-0.1970964'
   }).save()
   for (let i = 1; i <= 3; i++) {
     let startDate = moment('02062020 100000', 'DDMMYYYY hhmmss');

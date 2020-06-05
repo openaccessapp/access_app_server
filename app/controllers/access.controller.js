@@ -6,8 +6,7 @@ const PlaceType = require('../models/place.type.model')
 const Slot = require('../models/slot.model')
 const Booking = require('../models/booking.model')
 const slotTypes = require('../enums/slot.type.enum')
-
-const ObjectID = require('mongodb').ObjectID
+const http = require('http')
 
 const dateFormat = 'DD.MM.YYYY HH:mm'
 
@@ -142,13 +141,13 @@ exports.visit = async (req, res) => {
   }
 
   if (req.body.visitors > 7 || req.body.visitors < 1)
-    return res.status(400).send({message: 'Visitors must be between 1 and 7'});
+    return res.status(400).send({ message: 'Visitors must be between 1 and 7' })
 
-  let slot = await Slot.findById(req.body.slotId);
+  let slot = await Slot.findById(req.body.slotId)
 
-  if (!slot) return res.status(404).send({ message: 'Slot not found' });
+  if (!slot) return res.status(404).send({ message: 'Slot not found' })
 
-  let people = req.body.visitors;
+  let people = req.body.visitors
 
   let booking = await Booking.findOne({ slotId: req.body.slotId, visitorId: req.params.visitorId })
 
@@ -194,6 +193,69 @@ exports.deleteVisit = async (req, res) => {
 }
 
 exports.getPlaceTypes = async (req, res) => {
-  let places = (await PlaceType.find()).map(place => ({id: place._id, name: place.name}));
-  return res.status(200).send({placeTypes: places});
+  let places = (await PlaceType.find()).map(place => ({ id: place._id, name: place.name }))
+  return res.status(200).send({ placeTypes: places })
+}
+
+exports.addPlace = async (req, res) => {
+  if (
+    //todo save the user who created the place
+    //!req.body.userId ||
+    !req.body.name ||
+    req.body.placeTypeId < 0 ||
+    !req.body.imageBase64 ||
+    !req.body.description ||
+    !req.body.url ||
+    !req.body.address ||
+    !req.body.coordinates) {
+    return res.status(400).send({ message: 'Missing body parameter!' })
+  }
+  placeTypeId = 0
+  if (req.body.placeTypeId) placeTypeId = req.body.placeTypeId
+
+  await new Place({
+    _id: nanoid.nanoid(),
+    name: req.body.name,
+    placeTypeId: placeTypeId,
+    image: req.body.imageBase64,
+    description: req.body.description,
+    url: req.body.url,
+    address: req.body.address,
+    coordinates: req.body.coordinates,
+    // userId: req.body.userId
+  }).save()
+
+  return res.status(201).send()
+}
+
+const API_KEY = '0YYtJqHR65OgpxkPygHwMC557ykFw0gE'
+
+exports.getCoordinates = async (req, res) => {
+  if (
+    //todo we don't want everyone to have access to the coordinate resolver
+    // !req.body.userId ||
+    !req.body.address) {
+    return res.status(400).send({ message: 'Missing body params' })
+  }
+
+  const url = `http://www.mapquestapi.com/geocoding/v1/address?key=${API_KEY}&thumbMaps=false&maxResults=1&location=${req.body.address}`
+
+  await http.get(url, (resp) => {
+    let data = ''
+
+    resp.on('data', (chunk) => {
+      data += chunk
+    })
+
+    resp.on('end', () => {
+      if (JSON.parse(data).results[0].locations.length > 0) {
+        let loc = JSON.parse(data).results[0].locations[0].latLng
+        return res.status(200).send({ coordinates: `${loc.lat},${loc.lng}` })
+      }
+      return res.status(404).send({ message: 'Location not found!' })
+    })
+
+  }).on('error', (err) => {
+    return res.status(500).send({ message: 'Can\'t connect..' })
+  })
 }

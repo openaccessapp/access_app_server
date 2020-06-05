@@ -9,6 +9,7 @@ const placeSchema = mongoose.Schema({
   url: String,
   address: String,
   coordinates: String
+  //todo access admin app users and who created the place?
 })
 
 module.exports = mongoose.model('Place', placeSchema)

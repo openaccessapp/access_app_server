@@ -17,7 +17,7 @@ module.exports = (app) => {
    */
   app.get('/api/user', access.generateUserId)
 
-  /**todo
+  /**
    * @swagger
    * /api/user/{visitorId}/visits:
    *  get:
@@ -232,7 +232,7 @@ module.exports = (app) => {
    * @swagger
    * /api/place-types:
    *  get:
-   *    description: get all place types
+   *    description: Get all place types
    *    responses:
    *      200:
    *        schema:
@@ -246,4 +246,76 @@ module.exports = (app) => {
    *                type: string
    */
   app.get('/api/place-types', access.getPlaceTypes)
+
+  /**
+   * todo document userId when added
+   * @swagger
+   * /api/place:
+   *  post:
+   *    description: create a new place
+   *    parameters:
+   *          - body: body
+   *            name: body
+   *            description: the body
+   *            in: body
+   *            required: true
+   *            type: application/json
+   *            schema:
+   *              type: object
+   *              properties:
+   *                name:
+   *                  type: string
+   *                placeTypeId:
+   *                  type: integer
+   *                imageBase64:
+   *                  type: string
+   *                description:
+   *                  type: string
+   *                url:
+   *                  type: string
+   *                address:
+   *                  type: string
+   *                coordinates:
+   *                  type: string
+   *    responses:
+   *      201:
+   *        description: created
+   *      400:
+   *        description: missing body param
+   */
+  app.post('/api/place', access.addPlace)
+
+  /**
+   * @swagger
+   * /api/coordinates:
+   *  post:
+   *    description: get the coordinates of a location
+   *    parameters:
+   *          - body: body
+   *            name: body
+   *            description: the body
+   *            in: body
+   *            required: true
+   *            type: application/json
+   *            schema:
+   *              type: object
+   *              properties:
+   *                address:
+   *                  type: string
+   *    responses:
+   *      200:
+   *        description: Returned location
+   *        schema:
+   *          type: object
+   *          properties:
+   *            location:
+   *              type: string
+   *      400:
+   *        description: missing address parameter
+   *      404:
+   *        description: location not found
+   *      500:
+   *        description: No connection to server
+   */
+  app.post('/api/coordinates', access.getCoordinates)
 }
