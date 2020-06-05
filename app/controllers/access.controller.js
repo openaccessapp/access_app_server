@@ -192,3 +192,8 @@ exports.deleteVisit = async (req, res) => {
 
   return res.status(204).send()
 }
+
+exports.getPlaceTypes = async (req, res) => {
+  let places = (await PlaceType.find()).map(place => ({id: place._id, name: place.name}));
+  return res.status(200).send({placeTypes: places});
+}

@@ -35,7 +35,7 @@ exports.fillDatabase = async () => {
     name: 'Museum'
   }).save()
 
-  new Place({ 
+  new Place({
     _id: 'place_id_1',
     name: 'Central Park',
     placeTypeId: 0,

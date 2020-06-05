@@ -227,4 +227,23 @@ module.exports = (app) => {
    *          description: ok
    */
   app.delete('/api/user/:visitorId/visit/:slotId', access.deleteVisit)
+
+  /**
+   * @swagger
+   * /api/place-types:
+   *  get:
+   *    description: get all place types
+   *    responses:
+   *      200:
+   *        schema:
+   *          type: array
+   *          items:
+   *            type: object
+   *            properties:
+   *              id:
+   *                type: integer
+   *              name:
+   *                type: string
+   */
+  app.get('/api/place-types', access.getPlaceTypes)
 }
