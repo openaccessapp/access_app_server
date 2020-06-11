@@ -236,12 +236,12 @@ exports.addPlace = async (req, res) => {
     //todo save the user who created the place
     //!req.body.userId ||
     !req.body.name ||
-    req.body.placeTypeId < 0 ||
-    !req.body.imageBase64 ||
+    req.body.typeId < 0 ||
+    !req.body.image ||
     !req.body.description ||
-    !req.body.url ||
+    !req.body.www ||
     !req.body.address ||
-    !req.body.coordinates) {
+    !req.body.location) {
     return res.status(400).send({ message: 'Missing body parameter!' })
   }
   placeTypeId = 0
@@ -297,7 +297,7 @@ exports.getCoordinates = async (req, res) => {
 exports.addSlot = async (req, res) => {
   if (
     !req.body.type ||
-    !req.params.place ||
+    !req.params.placeId ||
     !req.body.date ||
     !req.body.startTime ||
     !req.body.endTime ||
