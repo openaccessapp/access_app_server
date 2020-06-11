@@ -93,6 +93,8 @@ module.exports = (app) => {
    *                               type: string
    *                           www:
    *                               type: string
+   *                           address:
+   *                               type: string
    *                           location:
    *                               type: string
    *                           isFavourite:
@@ -265,17 +267,17 @@ module.exports = (app) => {
    *              properties:
    *                name:
    *                  type: string
-   *                placeTypeId:
+   *                typeId:
    *                  type: integer
-   *                imageBase64:
+   *                image:
    *                  type: string
    *                description:
    *                  type: string
-   *                url:
+   *                www:
    *                  type: string
    *                address:
    *                  type: string
-   *                coordinates:
+   *                location:
    *                  type: string
    *    responses:
    *      201:

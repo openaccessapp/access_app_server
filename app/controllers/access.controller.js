@@ -86,6 +86,7 @@ exports.getPlaces = async (req, res) => {
     image: place.image,
     description: place.description,
     www: place.url,
+    address: place.address,
     location: place.coordinates,
     isFavourite: favourites.includes(place._id)
   }))
@@ -249,12 +250,12 @@ exports.addPlace = async (req, res) => {
   await new Place({
     _id: nanoid.nanoid(),
     name: req.body.name,
-    placeTypeId: placeTypeId,
-    image: req.body.imageBase64,
+    placeTypeId: req.body.typeId,
+    image: req.body.image,
     description: req.body.description,
-    url: req.body.url,
+    url: req.body.www,
     address: req.body.address,
-    coordinates: req.body.coordinates,
+    coordinates: req.body.location,
     // userId: req.body.userId
   }).save()
 
@@ -296,7 +297,7 @@ exports.getCoordinates = async (req, res) => {
 exports.addSlot = async (req, res) => {
   if (
     !req.body.type ||
-    !req.params.placeId ||
+    !req.params.place ||
     !req.body.date ||
     !req.body.startTime ||
     !req.body.endTime ||
