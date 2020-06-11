@@ -8,7 +8,9 @@ const Booking = require('../models/booking.model')
 const slotTypes = require('../enums/slot.type.enum')
 const http = require('http')
 
-const dateFormat = 'DD.MM.YYYY HH:mm'
+const dateTimeFormat = 'DD.MM.YYYY HH:mm'
+const dateFormat = 'DD.MM.YYYY'
+const timeFormat = 'HH:mm'
 
 exports.generateUserId = (req, res) => {
   let id = nanoid.nanoid()
@@ -35,19 +37,35 @@ exports.getBookings = async (req, res) => {
     path: 'slotId',
     populate: { path: 'placeId' }
   })
+  let output = []
 
-  let output = bookings.map(booking => ({
-    name: booking.slotId.placeId.name,
-    type: slotTypes.findById(booking.slotId.typeId).name,
-    startTime: moment(booking.slotId.starts).format(dateFormat),
-    endTime: moment(booking.slotId.ends).format(dateFormat),
-    visitors: booking.slotId.friendsNumber,
-    occupiedSlots: booking.slotId.occupiedSlots,
-    maxSlots: booking.slotId.maxVisitors
-  }))
+  bookings.forEach(booking => {
+    let o = output[moment(booking.slotId.starts).format(dateFormat)]
+    if (o)
+      o.push({
+        name: booking.slotId.placeId.name,
+        type: slotTypes.findById(booking.slotId.typeId).name,
+        startTime: moment(booking.slotId.starts).format(timeFormat),
+        endTime: moment(booking.slotId.ends).format(timeFormat),
+        visitors: booking.slotId.friendsNumber,
+        occupiedSlots: booking.slotId.occupiedSlots,
+        maxSlots: booking.slotId.maxVisitors
+      })
+    else
+      output[moment(booking.slotId.starts).format(dateFormat)] = [{
+        name: booking.slotId.placeId.name,
+        type: slotTypes.findById(booking.slotId.typeId).name,
+        startTime: moment(booking.slotId.starts).format(timeFormat),
+        endTime: moment(booking.slotId.ends).format(timeFormat),
+        visitors: booking.slotId.friendsNumber,
+        occupiedSlots: booking.slotId.occupiedSlots,
+        maxSlots: booking.slotId.maxVisitors
+      }]
+
+  })
 
   return res.status(200).send({
-    visits: output
+    visits: {...output}
   })
 }
 
@@ -94,18 +112,33 @@ exports.getPlaceSlots = async (req, res) => {
 
   let bookings = await Booking.find({ slotId: { $in: slotIds } })
 
-  let output = slots.map(slot => ({
-    id: slot.id,
-    type: slotTypes.findById(slot.typeId).name,
-    from: moment(slot.starts).format(dateFormat),
-    to: moment(slot.ends).format(dateFormat),
-    occupiedSlots: slot.occupiedSlots,
-    maxSlots: slot.maxVisitors,
-    isPlanned: !!bookings.find(booking => booking.slotId === slot._id && booking.visitorId === req.params.visitorId)
-  }))
+  let output = []
+
+  slots.forEach(slot => {
+    let o = output[moment(slot.starts).format(dateFormat)]
+    if (o) o.push({
+      id: slot.id,
+      type: slotTypes.findById(slot.typeId).name,
+      from: moment(slot.starts).format(timeFormat),
+      to: moment(slot.ends).format(timeFormat),
+      occupiedSlots: slot.occupiedSlots,
+      maxSlots: slot.maxVisitors,
+      isPlanned: !!bookings.find(booking => booking.slotId === slot._id && booking.visitorId === req.params.visitorId)
+    })
+    else
+      output[moment(slot.starts).format(dateFormat)] = [{
+        id: slot.id,
+        type: slotTypes.findById(slot.typeId).name,
+        from: moment(slot.starts).format(timeFormat),
+        to: moment(slot.ends).format(timeFormat),
+        occupiedSlots: slot.occupiedSlots,
+        maxSlots: slot.maxVisitors,
+        isPlanned: !!bookings.find(booking => booking.slotId === slot._id && booking.visitorId === req.params.visitorId)
+      }]
+  })
 
   return res.status(200).send({
-    slots: output
+    slots: {...output}
   })
 }
 
