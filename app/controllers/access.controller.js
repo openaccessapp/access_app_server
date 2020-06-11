@@ -8,9 +8,9 @@ const Booking = require('../models/booking.model')
 const slotTypes = require('../enums/slot.type.enum')
 const http = require('http')
 
-const dateTimeFormat = 'DD.MM.YYYY HH:mm'
-const dateFormat = 'DD.MM.YYYY'
-const timeFormat = 'HH:mm'
+const DATE_FORMAT = 'DD.MM.YYYY'
+const TIME_FORMAT = 'HH:mm'
+const DATE_TIME_FORMAT = `${DATE_FORMAT} ${TIME_FORMAT}`
 
 exports.generateUserId = (req, res) => {
   let id = nanoid.nanoid()
@@ -40,23 +40,23 @@ exports.getBookings = async (req, res) => {
   let output = []
 
   bookings.forEach(booking => {
-    let o = output[moment(booking.slotId.starts).format(dateFormat)]
+    let o = output[moment(booking.slotId.starts).format(DATE_FORMAT)]
     if (o)
       o.push({
         name: booking.slotId.placeId.name,
         type: slotTypes.findById(booking.slotId.typeId).name,
-        startTime: moment(booking.slotId.starts).format(timeFormat),
-        endTime: moment(booking.slotId.ends).format(timeFormat),
+        startTime: moment(booking.slotId.starts).format(TIME_FORMAT),
+        endTime: moment(booking.slotId.ends).format(TIME_FORMAT),
         visitors: booking.slotId.friendsNumber,
         occupiedSlots: booking.slotId.occupiedSlots,
         maxSlots: booking.slotId.maxVisitors
       })
     else
-      output[moment(booking.slotId.starts).format(dateFormat)] = [{
+      output[moment(booking.slotId.starts).format(DATE_FORMAT)] = [{
         name: booking.slotId.placeId.name,
         type: slotTypes.findById(booking.slotId.typeId).name,
-        startTime: moment(booking.slotId.starts).format(timeFormat),
-        endTime: moment(booking.slotId.ends).format(timeFormat),
+        startTime: moment(booking.slotId.starts).format(TIME_FORMAT),
+        endTime: moment(booking.slotId.ends).format(TIME_FORMAT),
         visitors: booking.slotId.friendsNumber,
         occupiedSlots: booking.slotId.occupiedSlots,
         maxSlots: booking.slotId.maxVisitors
@@ -115,22 +115,22 @@ exports.getPlaceSlots = async (req, res) => {
   let output = []
 
   slots.forEach(slot => {
-    let o = output[moment(slot.starts).format(dateFormat)]
+    let o = output[moment(slot.starts).format(DATE_FORMAT)]
     if (o) o.push({
       id: slot.id,
       type: slotTypes.findById(slot.typeId).name,
-      from: moment(slot.starts).format(timeFormat),
-      to: moment(slot.ends).format(timeFormat),
+      from: moment(slot.starts).format(TIME_FORMAT),
+      to: moment(slot.ends).format(TIME_FORMAT),
       occupiedSlots: slot.occupiedSlots,
       maxSlots: slot.maxVisitors,
       isPlanned: !!bookings.find(booking => booking.slotId === slot._id && booking.visitorId === req.params.visitorId)
     })
     else
-      output[moment(slot.starts).format(dateFormat)] = [{
+      output[moment(slot.starts).format(DATE_FORMAT)] = [{
         id: slot.id,
         type: slotTypes.findById(slot.typeId).name,
-        from: moment(slot.starts).format(timeFormat),
-        to: moment(slot.ends).format(timeFormat),
+        from: moment(slot.starts).format(TIME_FORMAT),
+        to: moment(slot.ends).format(TIME_FORMAT),
         occupiedSlots: slot.occupiedSlots,
         maxSlots: slot.maxVisitors,
         isPlanned: !!bookings.find(booking => booking.slotId === slot._id && booking.visitorId === req.params.visitorId)
@@ -291,4 +291,29 @@ exports.getCoordinates = async (req, res) => {
   }).on('error', (err) => {
     return res.status(500).send({ message: 'Can\'t connect..' })
   })
+}
+
+exports.addSlot = async (req, res) => {
+  if (
+    !req.body.type ||
+    !req.params.placeId ||
+    !req.body.date ||
+    !req.body.startTime ||
+    !req.body.endTime ||
+    !req.body.max ||
+    !req.body.repeat) {
+    return res.status(400).send({ message: 'Missing body parameter!' })
+  }
+
+  await new Slot({
+    _id: nanoid.nanoid(),
+    placeId: req.params.placeId,
+    typeId: slotTypes.findByName(req.body.type).id,
+    starts: moment(`${req.body.date} ${req.body.startTime}`, DATE_TIME_FORMAT).toDate(),
+    ends: moment(`${req.body.date} ${req.body.endTime}`, DATE_TIME_FORMAT).toDate(),
+    occupiedSlots: 0,
+    maxVisitors: req.body.max
+  }).save()
+
+  return res.status(201).send()
 }

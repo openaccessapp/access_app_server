@@ -318,4 +318,45 @@ module.exports = (app) => {
    *        description: No connection to server
    */
   app.post('/api/coordinates', access.getCoordinates)
+
+  /**
+   * @swagger
+   * /api/slot/{placeId}:
+   *  post:
+   *    description: create a new slot
+   *    parameters:
+   *          - visitorId: placeId
+   *            name: placeId
+   *            description: the place's id
+   *            in: path
+   *            required: true
+   *            type: string
+   *          - body: body
+   *            name: body
+   *            description: the body
+   *            in: body
+   *            required: true
+   *            type: application/json
+   *            schema:
+   *              type: object
+   *              properties:
+   *                type:
+   *                  type: string
+   *                date:
+   *                  type: string
+   *                startTime:
+   *                  type: string
+   *                endTime:
+   *                  type: string
+   *                max:
+   *                  type: integer
+   *                repeat:
+   *                  type: boolean
+   *    responses:
+   *      201:
+   *        description: created
+   *      400:
+   *        description: missing body param
+   */
+  app.post('/api/slot/:placeId', access.addSlot)
 }
