@@ -12,7 +12,8 @@ require('dotenv').config()
 const app = express()
 
 // parse requests of content-type - application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }))
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(express.json({ limit: '10mb' }))
 
 // parse requests of content-type - application/json
 app.use(bodyParser.json())
@@ -35,7 +36,7 @@ mongoose.connect(dbConfig.url, {
   process.exit()
 })
 
-migration.fillDatabase();
+migration.fillDatabase()
 
 app.get('/', (req, res) => {
   res.json({ 'message': 'Welcome to Access App. CHANGEEE.' })
