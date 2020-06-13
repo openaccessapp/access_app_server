@@ -33,7 +33,10 @@ exports.getBookings = async (req, res) => {
     return res.status(400).send({ message: 'Invalid User ID' })
   }
 
-  let bookings = await Booking.find({ visitorId: req.params.visitorId }).populate({
+  let skip = req.query.skip ? req.query.skip : 0
+  let load = req.query.load ? req.query.load : 10
+
+  let bookings = await Booking.find({ visitorId: req.params.visitorId }).skip(skip).limit(load).populate({
     path: 'slotId',
     populate: { path: 'placeId' }
   })
@@ -75,11 +78,20 @@ exports.getPlaces = async (req, res) => {
     let visitor = await Visitor.findById(req.params.visitorId)
     if (visitor) favourites = visitor.favourites
   }
+
+  let skip = req.query.skip ? req.query.skip : 0
+  let load = req.query.load ? req.query.load : 5
+
   let placeTypes = new Map()
   let types = await PlaceType.find()
   types.map(place => placeTypes.set(place._id, place.name))
-  let places = await Place.find()
-  let output = places.map(place => ({
+
+  let placeSearch = req.query.typeId ? Place.find({placeTypeId: req.query.typeId}) : Place.find()
+  // placeSearch = req.query.location ? placeSearch.sort({search by nearby coordinates}) : placeSearch.sort({name:1})
+
+  let places = await placeSearch.sort({name: 1}).skip(skip).limit(load)
+
+    let output = places.map(place => ({
     id: place._id,
     name: place.name,
     type: placeTypes.get(place.placeTypeId),
@@ -104,10 +116,13 @@ exports.getPlaceSlots = async (req, res) => {
     return res.status(404).send({ message: 'Invalid Visitor ID' })
   }
 
+  let skip = req.query.skip ? req.query.skip : 0
+  let load = req.query.load ? req.query.load : 20
+
   let slots = await Slot.find({
     placeId: req.params.placeId,
     // starts: { $gte: moment().startOf('day').toDate() }
-  }).sort({ starts: 1 })
+  }).sort({ starts: 1 }).skip(skip).limit(load)
 
   let slotIds = slots.map(slot => (slot.id))
 

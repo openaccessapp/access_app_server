@@ -29,6 +29,18 @@ module.exports = (app) => {
    *            in: path
    *            required: true
    *            type: string
+   *          - skip: skip
+   *            name: skip
+   *            description: how many to skip
+   *            in: query
+   *            required: false
+   *            type: integer
+   *          - load: load
+   *            name: load
+   *            description: how many to load
+   *            in: query
+   *            required: false
+   *            type: integer
    *      responses:
    *          200:
    *              schema:
@@ -71,6 +83,18 @@ module.exports = (app) => {
    *            in: path
    *            required: true
    *            type: string
+   *          - skip: skip
+   *            name: skip
+   *            description: how many to skip
+   *            in: query
+   *            required: false
+   *            type: integer
+   *          - load: load
+   *            name: load
+   *            description: how many to load
+   *            in: query
+   *            required: false
+   *            type: integer
    *      responses:
    *          200:
    *              schema:
@@ -120,6 +144,18 @@ module.exports = (app) => {
    *            in: path
    *            required: true
    *            type: string
+   *          - skip: skip
+   *            name: skip
+   *            description: how many to skip
+   *            in: query
+   *            required: false
+   *            type: integer
+   *          - load: load
+   *            name: load
+   *            description: how many to load
+   *            in: query
+   *            required: false
+   *            type: integer
    *      responses:
    *          200:
    *              schema:
