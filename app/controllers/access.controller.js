@@ -33,8 +33,8 @@ exports.getBookings = async (req, res) => {
     return res.status(400).send({ message: 'Invalid User ID' })
   }
 
-  let skip = req.query.skip ? req.query.skip : 0
-  let load = req.query.load ? req.query.load : 10
+  let skip = req.query.skip ? Number.parseInt(req.query.skip) : 0
+  let load = req.query.load ? Number.parseInt(req.query.load) : 10
 
   let bookings = await Booking.find({ visitorId: req.params.visitorId }).skip(skip).limit(load).populate({
     path: 'slotId',
@@ -79,8 +79,8 @@ exports.getPlaces = async (req, res) => {
     if (visitor) favourites = visitor.favourites
   }
 
-  let skip = req.query.skip ? req.query.skip : 0
-  let load = req.query.load ? req.query.load : 5
+  let skip = req.query.skip ? Number.parseInt(req.query.skip) : 0
+  let load = req.query.load ? Number.parseInt(req.query.load) : 5
 
   let placeTypes = new Map()
   let types = await PlaceType.find()
@@ -116,8 +116,8 @@ exports.getPlaceSlots = async (req, res) => {
     return res.status(404).send({ message: 'Invalid Visitor ID' })
   }
 
-  let skip = req.query.skip ? req.query.skip : 0
-  let load = req.query.load ? req.query.load : 20
+  let skip = req.query.skip ? Number.parseInt(req.query.skip) : 0
+  let load = req.query.load ? Number.parseInt(req.query.load) : 20
 
   let slots = await Slot.find({
     placeId: req.params.placeId,
