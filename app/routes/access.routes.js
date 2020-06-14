@@ -180,6 +180,8 @@ module.exports = (app) => {
    *                               type: integer
    *                           isPlanned:
    *                               type: boolean
+   *                           friends:
+   *                               type: integer
    */
   app.get('/api/place/:visitorId/:placeId', access.getPlaceSlots)
 
