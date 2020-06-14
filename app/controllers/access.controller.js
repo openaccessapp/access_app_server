@@ -68,7 +68,7 @@ exports.getBookings = async (req, res) => {
   })
 
   return res.status(200).send({
-    visits: {...output}
+    visits: { ...output }
   })
 }
 
@@ -86,12 +86,12 @@ exports.getPlaces = async (req, res) => {
   let types = await PlaceType.find()
   types.map(place => placeTypes.set(place._id, place.name))
 
-  let placeSearch = req.query.typeId ? Place.find({placeTypeId: req.query.typeId}) : Place.find()
+  let placeSearch = req.query.typeId ? Place.find({ placeTypeId: req.query.typeId }) : Place.find()
   // placeSearch = req.query.location ? placeSearch.sort({search by nearby coordinates}) : placeSearch.sort({name:1})
 
-  let places = await placeSearch.sort({name: 1}).skip(skip).limit(load)
+  let places = await placeSearch.sort({ name: 1 }).skip(skip).limit(load)
 
-    let output = places.map(place => ({
+  let output = places.map(place => ({
     id: place._id,
     name: place.name,
     type: placeTypes.get(place.placeTypeId),
@@ -154,7 +154,7 @@ exports.getPlaceSlots = async (req, res) => {
   })
 
   return res.status(200).send({
-    slots: {...output}
+    slots: { ...output }
   })
 }
 
@@ -203,15 +203,16 @@ exports.visit = async (req, res) => {
   if (booking) {
     people -= booking.friendsNumber
     if (people !== 0) {
-      if (slot.occupiedSlots += people > slot.maxVisitors)
+      if (slot.occupiedSlots + people > slot.maxVisitors)
         return res.status(400).send({ message: 'Not enough place on this slot!' })
 
       booking.friendsNumber = req.body.visitors
       await booking.save()
-    }
+    } else
+      return res.status(204).send()
 
   } else {
-    if (slot.occupiedSlots += people > slot.maxVisitors)
+    if (slot.occupiedSlots + people > slot.maxVisitors)
       return res.status(400).send({ message: 'Not enough place on this slot!' })
 
     new Booking({
