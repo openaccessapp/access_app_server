@@ -36,15 +36,15 @@ exports.getBookings = async (req, res) => {
   let skip = req.query.skip ? Number.parseInt(req.query.skip) : 0
   let load = req.query.load ? Number.parseInt(req.query.load) : 10
 
-  let bookings = await Booking.find({ visitorId: req.params.visitorId }).populate({
+  let bookings = await Booking.find({ visitorId: req.params.visitorId }).skip(skip).limit(load).populate({
     path: 'slotId',
     populate: { path: 'placeId' }
-  }).skip(skip).limit(load)
+  })
   let output = []
 
   bookings.sort((a, b) => a.slotId.starts - b.slotId.starts)
 
-  bookings.forEach(booking => {
+  for (const booking of bookings) {
     let o = output[moment(booking.slotId.starts).format(DATE_FORMAT)]
     if (o)
       o.push({
@@ -54,7 +54,9 @@ exports.getBookings = async (req, res) => {
         endTime: moment(booking.slotId.ends).format(TIME_FORMAT),
         visitors: booking.friendsNumber,
         occupiedSlots: booking.slotId.occupiedSlots,
-        maxSlots: booking.slotId.maxVisitors
+        maxSlots: booking.slotId.maxVisitors,
+        slotId: booking.slotId._id,
+        placeId: booking.slotId.placeId._id
       })
     else
       output[moment(booking.slotId.starts).format(DATE_FORMAT)] = [{
@@ -64,10 +66,11 @@ exports.getBookings = async (req, res) => {
         endTime: moment(booking.slotId.ends).format(TIME_FORMAT),
         visitors: booking.friendsNumber,
         occupiedSlots: booking.slotId.occupiedSlots,
-        maxSlots: booking.slotId.maxVisitors
+        maxSlots: booking.slotId.maxVisitors,
+        slotId: booking.slotId._id,
+        placeId: booking.slotId.placeId._id
       }]
-
-  })
+  }
 
   return res.status(200).send({
     visits: { ...output }

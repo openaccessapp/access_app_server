@@ -62,6 +62,10 @@ module.exports = (app) => {
    *                              type: integer
    *                          maxSlots:
    *                              type: integer
+   *                          slotId:
+   *                              type: string
+   *                          placeId:
+   *                              type: string
    *          400:
    *              schema:
    *                  type: object
