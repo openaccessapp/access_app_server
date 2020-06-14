@@ -36,11 +36,13 @@ exports.getBookings = async (req, res) => {
   let skip = req.query.skip ? Number.parseInt(req.query.skip) : 0
   let load = req.query.load ? Number.parseInt(req.query.load) : 10
 
-  let bookings = await Booking.find({ visitorId: req.params.visitorId }).skip(skip).limit(load).populate({
+  let bookings = await Booking.find({ visitorId: req.params.visitorId }).populate({
     path: 'slotId',
     populate: { path: 'placeId' }
-  })
+  }).skip(skip).limit(load)
   let output = []
+
+  bookings.sort((a, b) => a.slotId.starts - b.slotId.starts)
 
   bookings.forEach(booking => {
     let o = output[moment(booking.slotId.starts).format(DATE_FORMAT)]
