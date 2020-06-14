@@ -143,7 +143,7 @@ exports.getPlaceSlots = async (req, res) => {
       occupiedSlots: slot.occupiedSlots,
       maxSlots: slot.maxVisitors,
       isPlanned: !!booking,
-      friends: booking.friendsNumber ? booking.friendsNumber : 0
+      friends: booking && booking.friendsNumber ? booking.friendsNumber : 0
     })
     else
       output[moment(slot.starts).format(DATE_FORMAT)] = [{
@@ -153,8 +153,8 @@ exports.getPlaceSlots = async (req, res) => {
         to: moment(slot.ends).format(TIME_FORMAT),
         occupiedSlots: slot.occupiedSlots,
         maxSlots: slot.maxVisitors,
-        isPlanned: !!bookings.find(booking => booking.slotId === slot._id && booking.visitorId === req.params.visitorId),
-        friends: booking.friendsNumber ? booking.friendsNumber : 0
+        isPlanned: !!booking,
+        friends: booking && booking.friendsNumber ? booking.friendsNumber : 0
       }]
   })
 
