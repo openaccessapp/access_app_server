@@ -288,6 +288,25 @@ module.exports = (app) => {
   app.get('/api/place-types', access.getPlaceTypes)
 
   /**
+   * @swagger
+   * /api/image/{placeId}:
+   *  get:
+   *    description: Get a place's image
+   *    parameters:
+   *        - placeId: placeId
+   *          name: placeId
+   *          description: the place's id
+   *          in: path
+   *          required: true
+   *          type: string
+   *    responses:
+   *      200:
+   *        schema:
+   *          type: string
+   */
+  app.get('/api/image/:placeId', access.getImage)
+
+  /**
    * todo document userId when added
    * @swagger
    * /api/place:
@@ -307,8 +326,6 @@ module.exports = (app) => {
    *                  type: string
    *                typeId:
    *                  type: integer
-   *                image:
-   *                  type: string
    *                description:
    *                  type: string
    *                www:

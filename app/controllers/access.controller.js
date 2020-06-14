@@ -6,7 +6,7 @@ const PlaceType = require('../models/place.type.model')
 const Slot = require('../models/slot.model')
 const Booking = require('../models/booking.model')
 const slotTypes = require('../enums/slot.type.enum')
-const http = require('http')
+const fs = require('fs')
 
 const DATE_FORMAT = 'DD.MM.YYYY'
 const TIME_FORMAT = 'HH:mm'
@@ -97,7 +97,6 @@ exports.getPlaces = async (req, res) => {
     id: place._id,
     name: place.name,
     type: placeTypes.get(place.placeTypeId),
-    image: place.image,
     description: place.description,
     www: place.url,
     address: place.address,
@@ -265,14 +264,20 @@ exports.addPlace = async (req, res) => {
     !req.body.location) {
     return res.status(400).send({ message: 'Missing body parameter!' })
   }
-  placeTypeId = 0
-  if (req.body.placeTypeId) placeTypeId = req.body.placeTypeId
+
+  let id = nanoid.nanoid()
+
+  let img = new Buffer.from(req.body.image, 'base64')
+  if (!img) return res.status(400).send({ message: 'Failed to upload image!' })
+
+  let placeTypeId = 0
+  if (req.body.placeTypeId) placeTypeId = req.body.typeId
 
   await new Place({
-    _id: nanoid.nanoid(),
+    _id: id,
     name: req.body.name,
-    placeTypeId: req.body.typeId,
-    image: req.body.image,
+    placeTypeId: placeTypeId,
+    imageData: img,
     description: req.body.description,
     url: req.body.www,
     address: req.body.address,
@@ -281,6 +286,17 @@ exports.addPlace = async (req, res) => {
   }).save()
 
   return res.status(201).send()
+}
+
+exports.getImage = async (req, res) => {
+  if (!req.params.placeId) {
+    return res.status(400).send({ message: 'Invalid place id' })
+  }
+  let place = await Place.findById(req.params.placeId)
+  if (place) {
+    res.contentType('image/png')
+    res.status(200).send(place.imageData)
+  }
 }
 
 const API_KEY = '0YYtJqHR65OgpxkPygHwMC557ykFw0gE'

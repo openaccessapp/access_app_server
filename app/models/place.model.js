@@ -4,7 +4,7 @@ const placeSchema = mongoose.Schema({
   _id: String,
   name: String,
   placeTypeId: { type: Number, ref: 'PlaceType' },
-  image: String,
+  imageData: Buffer,
   description: String,
   url: String,
   address: String,
