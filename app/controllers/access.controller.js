@@ -50,7 +50,7 @@ exports.getBookings = async (req, res) => {
         type: slotTypes.findById(booking.slotId.typeId).name,
         startTime: moment(booking.slotId.starts).format(TIME_FORMAT),
         endTime: moment(booking.slotId.ends).format(TIME_FORMAT),
-        visitors: booking.slotId.friendsNumber,
+        visitors: booking.friendsNumber,
         occupiedSlots: booking.slotId.occupiedSlots,
         maxSlots: booking.slotId.maxVisitors
       })
@@ -60,7 +60,7 @@ exports.getBookings = async (req, res) => {
         type: slotTypes.findById(booking.slotId.typeId).name,
         startTime: moment(booking.slotId.starts).format(TIME_FORMAT),
         endTime: moment(booking.slotId.ends).format(TIME_FORMAT),
-        visitors: booking.slotId.friendsNumber,
+        visitors: booking.friendsNumber,
         occupiedSlots: booking.slotId.occupiedSlots,
         maxSlots: booking.slotId.maxVisitors
       }]
