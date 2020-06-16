@@ -225,7 +225,7 @@ exports.visit = async (req, res) => {
     let hasBooked = await Booking.findOne({ visitorId: req.params.visitorId }).populate({
       path: 'slotId',
       populate: { path: 'placeId' },
-      match: { starts: { $gte: slot.starts, $lte: slot.ends }, ends: { $gte: slot.starts, $lte: slot.ends } }
+      match: { $or: [ {starts: { $gte: slot.starts, $lt: slot.ends }}, {ends: { $gt: slot.starts, $lte: slot.ends }}] }
     })
     if (hasBooked !== null && hasBooked.slotId) return res.status(400).send({
       message: `You already have a booking for ${hasBooked.slotId.placeId.name} (${moment(hasBooked.slotId.starts).format(TIME_FORMAT)} - ${moment(hasBooked.slotId.ends).format(TIME_FORMAT)}) that overlaps with this booking!`
