@@ -242,7 +242,7 @@ module.exports = (app) => {
    *        204:
    *          description: ok
    *        400:
-   *          description: Slot is full | Visitors more than 7 or less than 1
+   *          description: Slot is full | Visitors more than 7 or less than 1 | Booking overlaps with another booking
    *        404:
    *          description: Invalid data
    */
