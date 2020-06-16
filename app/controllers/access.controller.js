@@ -222,14 +222,34 @@ exports.visit = async (req, res) => {
     if (slot.occupiedSlots + people > slot.maxVisitors)
       return res.status(400).send({ message: 'Not enough place on this slot!' })
 
-    let hasBooked = await Booking.findOne({ visitorId: req.params.visitorId }).populate({
+    let bookings = await Booking.find({ visitorId: req.params.visitorId }).populate({
       path: 'slotId',
+      match: {
+        $or:
+          [
+            {
+              starts: // 10
+                {
+                  $gte: slot.starts, // 10
+                  $lt: slot.ends // 11
+                }
+            },
+            {
+              ends: // 11
+                {
+                  $gt: slot.starts, // 10
+                  $lte: slot.ends // 11
+                }
+            }
+          ]
+      },
       populate: { path: 'placeId' },
-      match: { $or: [ {starts: { $gte: slot.starts, $lt: slot.ends }}, {ends: { $gt: slot.starts, $lte: slot.ends }}] }
     })
-    if (hasBooked !== null && hasBooked.slotId) return res.status(400).send({
-      message: `You already have a booking at ${hasBooked.slotId.placeId.name} (${moment(hasBooked.slotId.starts).format(TIME_FORMAT)} - ${moment(hasBooked.slotId.ends).format(TIME_FORMAT)}) that overlaps with this booking!`
-    })
+    for (const booking of bookings) {
+      if (booking !== null && booking.slotId) return res.status(400).send({
+        message: `You already have a booking at ${hasBooked.slotId.placeId.name} (${moment(hasBooked.slotId.starts).format(TIME_FORMAT)} - ${moment(hasBooked.slotId.ends).format(TIME_FORMAT)}) that overlaps with this booking!`
+      })
+    }
 
     new Booking({
       _id: nanoid.nanoid(),
