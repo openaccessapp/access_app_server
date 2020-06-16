@@ -227,9 +227,8 @@ exports.visit = async (req, res) => {
       populate: { path: 'placeId' },
       match: { starts: { $gte: slot.starts, $lte: slot.ends }, ends: { $gte: slot.starts, $lte: slot.ends } }
     })
-    if (hasBooked) return res.status(400).send({
-      message: `You already have a booking for ${hasBooked.slotId.placeId.name} 
-    (${moment(hasBooked.slotId.starts).format(TIME_FORMAT)} - ${moment(hasBooked.slotId.ends).format(TIME_FORMAT)}) that overlaps with this booking!`
+    if (hasBooked !== null && hasBooked.slotId) return res.status(400).send({
+      message: `You already have a booking for ${hasBooked.slotId.placeId.name} (${moment(hasBooked.slotId.starts).format(TIME_FORMAT)} - ${moment(hasBooked.slotId.ends).format(TIME_FORMAT)}) that overlaps with this booking!`
     })
 
     new Booking({
