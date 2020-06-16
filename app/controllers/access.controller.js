@@ -247,7 +247,7 @@ exports.visit = async (req, res) => {
     })
     for (const booking of bookings) {
       if (booking !== null && booking.slotId) return res.status(400).send({
-        message: `You already have a booking at ${hasBooked.slotId.placeId.name} (${moment(hasBooked.slotId.starts).format(TIME_FORMAT)} - ${moment(hasBooked.slotId.ends).format(TIME_FORMAT)}) that overlaps with this booking!`
+        message: `You already have a booking at ${booking.slotId.placeId.name} (${moment(booking.slotId.starts).format(TIME_FORMAT)} - ${moment(booking.slotId.ends).format(TIME_FORMAT)}) that overlaps with this booking!`
       })
     }
 
