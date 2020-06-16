@@ -114,6 +114,9 @@ exports.getPlaces = async (req, res) => {
     isFavourite: favourites.includes(place._id)
   }))
 
+  if (req.query.onlyFavourites) output = output.filter(place => place.isFavourite)
+
+
   return res.status(200).send({
     places: output
   })

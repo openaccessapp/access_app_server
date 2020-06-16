@@ -111,6 +111,12 @@ module.exports = (app) => {
    *            in: query
    *            required: false
    *            type: string
+   *          - onlyFavourites: onlyFavourites
+   *            name: onlyFavourites
+   *            description: filter only favourites
+   *            in: query
+   *            required: false
+   *            type: boolean
    *      responses:
    *          200:
    *              schema:
