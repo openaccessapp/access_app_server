@@ -99,6 +99,18 @@ module.exports = (app) => {
    *            in: query
    *            required: false
    *            type: integer
+   *          - typeId: typeId
+   *            name: typeId
+   *            description: the id of the place type
+   *            in: query
+   *            required: false
+   *            type: number
+   *          - n: n
+   *            name: name
+   *            description: part of the place's name
+   *            in: query
+   *            required: false
+   *            type: string
    *      responses:
    *          200:
    *              schema:

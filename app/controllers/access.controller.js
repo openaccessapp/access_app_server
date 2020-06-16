@@ -91,8 +91,15 @@ exports.getPlaces = async (req, res) => {
   let types = await PlaceType.find()
   types.map(place => placeTypes.set(place._id, place.name))
 
-  let placeSearch = req.query.typeId ? Place.find({ placeTypeId: req.query.typeId }) : Place.find()
-  // placeSearch = req.query.location ? placeSearch.sort({search by nearby coordinates}) : placeSearch.sort({name:1})
+  let placeSearch
+  if (req.query.name) {
+    placeSearch = req.query.typeId ? Place.find({
+      placeTypeId: req.query.typeId,
+      'name': new RegExp(`.*${req.query.name}.*`, 'i')
+    }) : Place.find({ 'name': new RegExp(`.*${req.query.name}.*`, 'i') })
+  } else {
+    placeSearch = req.query.typeId ? Place.find({ placeTypeId: req.query.typeId }) : Place.find()
+  }
 
   let places = await placeSearch.sort({ name: 1 }).skip(skip).limit(load)
 
