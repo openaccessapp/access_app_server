@@ -372,7 +372,7 @@ module.exports = (app) => {
   /**
    * @swagger
    * /api/place/{userId}/{placeId}:
-   *  post:
+   *  put:
    *    description: create a new place
    *    parameters:
    *          - userId: userId
