@@ -317,7 +317,7 @@ exports.addPlace = async (req, res) => {
 
   await new Place({
     _id: id,
-    userId: req.params.userId,
+    creatorId: req.params.userId,
     name: req.body.name,
     placeTypeId: placeTypeId,
     imageData: img,
