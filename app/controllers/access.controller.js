@@ -92,13 +92,17 @@ exports.getPlaces = async (req, res) => {
   types.map(place => placeTypes.set(place._id, place.name))
 
   let placeSearch
-  if (req.query.name) {
-    placeSearch = req.query.typeId ? Place.find({
-      placeTypeId: req.query.typeId,
-      'name': new RegExp(`.*${req.query.name}.*`, 'i')
-    }) : Place.find({ 'name': new RegExp(`.*${req.query.name}.*`, 'i') })
+  if (req.query.own) {
+    placeSearch = await Place.find({ creatorId: req.params.userId })
   } else {
-    placeSearch = req.query.typeId ? Place.find({ placeTypeId: req.query.typeId }) : Place.find()
+    if (req.query.name) {
+      placeSearch = req.query.typeId ? await Place.find({
+        placeTypeId: req.query.typeId,
+        'name': new RegExp(`.*${req.query.name}.*`, 'i')
+      }) : Place.find({ 'name': new RegExp(`.*${req.query.name}.*`, 'i') })
+    } else {
+      placeSearch = req.query.typeId ? await Place.find({ placeTypeId: req.query.typeId }) : await Place.find()
+    }
   }
 
   let places = await placeSearch.sort({ name: 1 }).skip(skip).limit(load)
@@ -334,7 +338,7 @@ exports.editPlace = async (req, res) => {
   }
 
   let place = await Place.findById(req.params.placeId)
-  if (req.params.userId !== place.userId) return res.status(401).send({message: 'User not creator'})
+  if (req.params.userId !== place.userId) return res.status(401).send({ message: 'User not creator' })
 
   let img
   if (req.body.image) {
@@ -350,7 +354,7 @@ exports.editPlace = async (req, res) => {
   if (req.body.address) place.address = req.body.address
   if (req.body.location) place.coordinates = req.body.location
 
-  await place.save();
+  await place.save()
 
   return res.status(200).send()
 }

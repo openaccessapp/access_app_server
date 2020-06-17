@@ -111,6 +111,12 @@ module.exports = (app) => {
    *            in: query
    *            required: false
    *            type: string
+   *          - own: own
+   *            name: own
+   *            description: get only places created by user
+   *            in: query
+   *            required: false
+   *            type: boolean
    *          - onlyFavourites: onlyFavourites
    *            name: onlyFavourites
    *            description: filter only favourites
