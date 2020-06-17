@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 
 const placeSchema = mongoose.Schema({
   _id: String,
+  creatorId: String,
   name: String,
   placeTypeId: { type: Number, ref: 'PlaceType' },
   imageData: Buffer,

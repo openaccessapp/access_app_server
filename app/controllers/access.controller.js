@@ -116,7 +116,6 @@ exports.getPlaces = async (req, res) => {
 
   if (req.query.onlyFavourites) output = output.filter(place => place.isFavourite)
 
-
   return res.status(200).send({
     places: output
   })
@@ -295,28 +294,26 @@ exports.getPlaceTypes = async (req, res) => {
 
 exports.addPlace = async (req, res) => {
   if (
-    //todo save the user who created the place
-    //!req.body.userId ||
+    !req.params.userId ||
     !req.body.name ||
-    req.body.typeId < 0 ||
-    !req.body.image ||
-    !req.body.description ||
-    !req.body.www ||
-    !req.body.address ||
-    !req.body.location) {
+    !req.body.description) {
     return res.status(400).send({ message: 'Missing body parameter!' })
   }
 
   let id = nanoid.nanoid()
 
-  let img = new Buffer.from(req.body.image, 'base64')
-  if (!img) return res.status(400).send({ message: 'Failed to upload image!' })
+  let img
+  if (req.body.image) {
+    img = new Buffer.from(req.body.image, 'base64')
+    if (!img) return res.status(400).send({ message: 'Failed to upload image!' })
+  }
 
   let placeTypeId = 0
   if (req.body.placeTypeId) placeTypeId = req.body.typeId
 
   await new Place({
     _id: id,
+    userId: req.params.userId,
     name: req.body.name,
     placeTypeId: placeTypeId,
     imageData: img,
@@ -324,10 +321,38 @@ exports.addPlace = async (req, res) => {
     url: req.body.www,
     address: req.body.address,
     coordinates: req.body.location,
-    // userId: req.body.userId
   }).save()
 
   return res.status(201).send()
+}
+
+exports.editPlace = async (req, res) => {
+  if (
+    !req.params.userId ||
+    !req.params.placeId) {
+    return res.status(400).send({ message: 'Missing parameter!' })
+  }
+
+  let place = await Place.findById(req.params.placeId)
+  if (req.params.userId !== place.userId) return res.status(401).send({message: 'User not creator'})
+
+  let img
+  if (req.body.image) {
+    img = new Buffer.from(req.body.image, 'base64')
+    if (!img) return res.status(400).send({ message: 'Failed to upload image!' })
+  }
+
+  if (req.body.name) place.name = req.body.name
+  if (req.body.description) place.description = req.body.description
+  if (req.body.typeId) place.placeTypeId = req.body.typeId
+  if (img) place.imageData = img
+  if (req.body.www) place.url = req.body.www
+  if (req.body.address) place.address = req.body.address
+  if (req.body.location) place.coordinates = req.body.location
+
+  await place.save();
+
+  return res.status(200).send()
 }
 
 exports.getImage = async (req, res) => {
@@ -345,8 +370,7 @@ const API_KEY = '0YYtJqHR65OgpxkPygHwMC557ykFw0gE'
 
 exports.getCoordinates = async (req, res) => {
   if (
-    //todo we don't want everyone to have access to the coordinate resolver
-    // !req.body.userId ||
+    !req.body.userId ||
     !req.body.address) {
     return res.status(400).send({ message: 'Missing body params' })
   }

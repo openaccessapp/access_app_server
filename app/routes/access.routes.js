@@ -329,12 +329,17 @@ module.exports = (app) => {
   app.get('/api/image/:placeId', access.getImage)
 
   /**
-   * todo document userId when added
    * @swagger
-   * /api/place:
+   * /api/place/{userId}:
    *  post:
    *    description: create a new place
    *    parameters:
+   *          - userId: userId
+   *            name: userId
+   *            description: the user's id
+   *            in: path
+   *            required: true
+   *            type: string
    *          - body: body
    *            name: body
    *            description: the body
@@ -362,7 +367,54 @@ module.exports = (app) => {
    *      400:
    *        description: missing body param
    */
-  app.post('/api/place', access.addPlace)
+  app.post('/api/place/:userId', access.addPlace)
+
+  /**
+   * @swagger
+   * /api/place/{userId}/{placeId}:
+   *  post:
+   *    description: create a new place
+   *    parameters:
+   *          - userId: userId
+   *            name: userId
+   *            description: the user's id
+   *            in: path
+   *            required: true
+   *            type: string
+   *          - placeId: placeId
+   *            name: placeId
+   *            description: the place's id
+   *            in: path
+   *            required: true
+   *            type: string
+   *          - body: body
+   *            name: body
+   *            description: the body
+   *            in: body
+   *            required: true
+   *            type: application/json
+   *            schema:
+   *              type: object
+   *              properties:
+   *                name:
+   *                  type: string
+   *                typeId:
+   *                  type: integer
+   *                description:
+   *                  type: string
+   *                www:
+   *                  type: string
+   *                address:
+   *                  type: string
+   *                location:
+   *                  type: string
+   *    responses:
+   *      201:
+   *        description: created
+   *      400:
+   *        description: missing body param
+   */
+  app.put('/api/place/:userId/:placeId', access.editPlace)
 
   /**
    * @swagger
@@ -381,6 +433,8 @@ module.exports = (app) => {
    *              properties:
    *                address:
    *                  type: string
+   *                userId:
+   *                  type: userId
    *    responses:
    *      200:
    *        description: Returned location
