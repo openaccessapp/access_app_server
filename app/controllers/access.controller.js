@@ -93,15 +93,15 @@ exports.getPlaces = async (req, res) => {
 
   let placeSearch
   if (req.query.own) {
-    placeSearch = await Place.find({ creatorId: req.params.userId })
+    placeSearch = Place.find({ creatorId: req.params.visitorId })
   } else {
     if (req.query.name) {
-      placeSearch = req.query.typeId ? await Place.find({
+      placeSearch = req.query.typeId ? Place.find({
         placeTypeId: req.query.typeId,
         'name': new RegExp(`.*${req.query.name}.*`, 'i')
       }) : Place.find({ 'name': new RegExp(`.*${req.query.name}.*`, 'i') })
     } else {
-      placeSearch = req.query.typeId ? await Place.find({ placeTypeId: req.query.typeId }) : await Place.find()
+      placeSearch = req.query.typeId ? Place.find({ placeTypeId: req.query.typeId }) : Place.find()
     }
   }
 
