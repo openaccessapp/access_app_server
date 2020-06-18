@@ -338,7 +338,10 @@ exports.editPlace = async (req, res) => {
   }
 
   let place = await Place.findById(req.params.placeId)
-  if (req.params.userId !== place.userId) return res.status(401).send({ message: 'User not creator' })
+
+  if (!place) return res.status(404).send({message: "Place not found"})
+
+  if (req.params.userId !== place.creatorId) return res.status(401).send({ message: 'User not creator' })
 
   let img
   if (req.body.image) {
