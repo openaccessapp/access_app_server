@@ -481,13 +481,11 @@ module.exports = (app) => {
    *              properties:
    *                type:
    *                  type: string
-   *                date:
+   *                from:
    *                  type: string
-   *                startTime:
+   *                to:
    *                  type: string
-   *                endTime:
-   *                  type: string
-   *                max:
+   *                maxSlots:
    *                  type: integer
    *                repeat:
    *                  type: boolean

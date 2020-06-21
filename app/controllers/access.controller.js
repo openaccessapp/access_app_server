@@ -408,10 +408,9 @@ exports.addSlot = async (req, res) => {
   if (
     !req.body.type ||
     !req.params.placeId ||
-    !req.body.date ||
-    !req.body.startTime ||
-    !req.body.endTime ||
-    !req.body.max ||
+    !req.body.from ||
+    !req.body.to ||
+    !req.body.maxSlots ||
     !req.body.repeat) {
     return res.status(400).send({ message: 'Missing body parameter!' })
   }
@@ -420,10 +419,10 @@ exports.addSlot = async (req, res) => {
     _id: nanoid.nanoid(),
     placeId: req.params.placeId,
     typeId: slotTypes.findByName(req.body.type).id,
-    starts: moment(`${req.body.date} ${req.body.startTime}`, DATE_TIME_FORMAT).toDate(),
-    ends: moment(`${req.body.date} ${req.body.endTime}`, DATE_TIME_FORMAT).toDate(),
+    starts: moment(`${req.body.from}`, DATE_TIME_FORMAT).toDate(),
+    ends: moment(`${req.body.to}`, DATE_TIME_FORMAT).toDate(),
     occupiedSlots: 0,
-    maxVisitors: req.body.max
+    maxVisitors: req.body.maxSlots
   }).save()
 
   return res.status(201).send()
