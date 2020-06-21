@@ -410,8 +410,7 @@ exports.addSlot = async (req, res) => {
     !req.params.placeId ||
     !req.body.from ||
     !req.body.to ||
-    !req.body.maxSlots ||
-    !req.body.repeat) {
+    !req.body.maxSlots) {
     return res.status(400).send({ message: 'Missing body parameter!' })
   }
 

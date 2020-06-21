@@ -10,8 +10,6 @@ exports.slots = () => { return slotTypes }
 exports.findById = (id) => { return slots[id] }
 
 exports.findByName = (name) => {
-  for (let slot of slots) {
-    if (slot.name === name) return slot
-  }
+  for (let slot of slots) if (slot.name === name) return slot
   return 0
 }
