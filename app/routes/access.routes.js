@@ -123,6 +123,12 @@ module.exports = (app) => {
    *            in: query
    *            required: false
    *            type: boolean
+   *          - approved: approved
+   *            name: approved
+   *            description: returns enabled/disabled entities
+   *            in: query
+   *            required: false
+   *            type: boolean
    *      responses:
    *          200:
    *              schema:
@@ -496,4 +502,22 @@ module.exports = (app) => {
    *        description: missing body param
    */
   app.post('/api/slot/:placeId', access.addSlot)
+
+  /**
+   * @swagger
+   * /api/place-approve/{placeId}:
+   *  get:
+   *    description: approve the place
+   *    parameters:
+   *          - visitorId: placeId
+   *            name: placeId
+   *            description: the place's id
+   *            in: path
+   *            required: true
+   *            type: string
+   *    responses:
+   *      201:
+   *        description: enabled
+   */
+  app.get('/api/place-approve/:placeId', access.approve)
 }

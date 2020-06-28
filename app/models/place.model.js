@@ -9,7 +9,8 @@ const placeSchema = mongoose.Schema({
   description: String,
   url: String,
   address: String,
-  coordinates: String
+  coordinates: String,
+  approved: Boolean
   //todo access admin app users and who created the place?
 })
 

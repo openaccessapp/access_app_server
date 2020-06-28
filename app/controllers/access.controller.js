@@ -6,7 +6,6 @@ const PlaceType = require('../models/place.type.model')
 const Slot = require('../models/slot.model')
 const Booking = require('../models/booking.model')
 const slotTypes = require('../enums/slot.type.enum')
-const fs = require('fs')
 
 const DATE_FORMAT = 'DD.MM.YYYY'
 const TIME_FORMAT = 'HH:mm'
@@ -91,17 +90,23 @@ exports.getPlaces = async (req, res) => {
   let types = await PlaceType.find()
   types.map(place => placeTypes.set(place._id, place.name))
 
+  let searchApprovedOnly = !req.query.approved
+
   let placeSearch
   if (req.query.own) {
-    placeSearch = Place.find({ creatorId: req.params.visitorId })
+    placeSearch = Place.find({ creatorId: req.params.visitorId, approved: searchApprovedOnly })
   } else {
     if (req.query.name) {
       placeSearch = req.query.typeId ? Place.find({
         placeTypeId: req.query.typeId,
-        'name': new RegExp(`.*${req.query.name}.*`, 'i')
-      }) : Place.find({ 'name': new RegExp(`.*${req.query.name}.*`, 'i') })
+        'name': new RegExp(`.*${req.query.name}.*`, 'i'),
+        approved: searchApprovedOnly
+      }) : Place.find({ 'name': new RegExp(`.*${req.query.name}.*`, 'i'), approved: searchApprovedOnly })
     } else {
-      placeSearch = req.query.typeId ? Place.find({ placeTypeId: req.query.typeId }) : Place.find()
+      placeSearch = req.query.typeId ? Place.find({
+        placeTypeId: req.query.typeId,
+        approved: searchApprovedOnly
+      }) : Place.find({ approved: searchApprovedOnly })
     }
   }
 
@@ -325,6 +330,7 @@ exports.addPlace = async (req, res) => {
     url: req.body.www,
     address: req.body.address,
     coordinates: req.body.location,
+    approved: false
   }).save()
 
   return res.status(201).send()
@@ -339,7 +345,7 @@ exports.editPlace = async (req, res) => {
 
   let place = await Place.findById(req.params.placeId)
 
-  if (!place) return res.status(404).send({message: "Place not found"})
+  if (!place) return res.status(404).send({ message: 'Place not found' })
 
   if (req.params.userId !== place.creatorId) return res.status(401).send({ message: 'User not creator' })
 
@@ -423,6 +429,15 @@ exports.addSlot = async (req, res) => {
     occupiedSlots: 0,
     maxVisitors: req.body.maxSlots
   }).save()
+
+  return res.status(201).send()
+}
+
+exports.approve = async (req, res) => {
+  if (!req.params.placeId)
+    return res.status(400).send({ message: 'Missing parameter!' })
+
+  await Place.updateOne({ _id: req.params.placeId }, { $set: { approved: true } })
 
   return res.status(201).send()
 }

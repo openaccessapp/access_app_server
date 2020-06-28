@@ -3,6 +3,7 @@ const bodyParser = require('body-parser')
 
 const swaggerUi = require('swagger-ui-express')
 const swaggerJSDoc = require('swagger-jsdoc')
+const Place = require('./app/models/place.model')
 
 const migration = require('./app/migrations/dummy.migration')
 
@@ -59,7 +60,9 @@ const options = {
 const swaggerSpec = swaggerJSDoc(options)
 app.use('/api', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
-// listen for requests
+Place.updateMany({ approved: { $exists: false } }, { approved: true }, function () {})
+
+// listen  for requests
 const PORT = process.env.PORT || 8080
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`)
