@@ -157,6 +157,8 @@ module.exports = (app) => {
    *                               type: string
    *                           isFavourite:
    *                               type: boolean
+   *                           approved:
+   *                               type: boolean
    */
   app.get('/api/place/:visitorId', access.getPlaces)
 
@@ -505,7 +507,7 @@ module.exports = (app) => {
 
   /**
    * @swagger
-   * /api/place-approve/{placeId}:
+   * /api/place/{placeId}/approve/{approvedStatus}:
    *  get:
    *    description: approve the place
    *    parameters:
@@ -515,9 +517,33 @@ module.exports = (app) => {
    *            in: path
    *            required: true
    *            type: string
+   *          - approvedStatus: approvedStatus
+   *            name: approvedStatus
+   *            description: is approved or not
+   *            in: path
+   *            required: true
+   *            type: boolean
    *    responses:
    *      201:
-   *        description: enabled
+   *        description: changed approved status
    */
-  app.get('/api/place-approve/:placeId', access.approve)
+  app.get('/api/place/:placeId/approve/:approvedStatus', access.approve)
+
+  /**
+   * @swagger
+   * /api/place/{placeId}:
+   *  delete:
+   *    description: delete a place
+   *    parameters:
+   *          - visitorId: placeId
+   *            name: placeId
+   *            description: the place's id
+   *            in: path
+   *            required: true
+   *            type: string
+   *    responses:
+   *      204:
+   *        description: deleted
+   */
+  app.delete('/api/place/:placeId', access.deletePlace)
 }

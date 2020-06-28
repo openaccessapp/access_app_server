@@ -94,7 +94,7 @@ exports.getPlaces = async (req, res) => {
 
   let placeSearch
   if (req.query.own) {
-    placeSearch = Place.find({ creatorId: req.params.visitorId, approved: searchApprovedOnly })
+    placeSearch = Place.find({ creatorId: req.params.visitorId})
   } else {
     if (req.query.name) {
       placeSearch = req.query.typeId ? Place.find({
@@ -120,7 +120,8 @@ exports.getPlaces = async (req, res) => {
     www: place.url,
     address: place.address,
     location: place.coordinates,
-    isFavourite: favourites.includes(place._id)
+    isFavourite: favourites.includes(place._id),
+    approved: place.approved
   }))
 
   if (req.query.onlyFavourites) output = output.filter(place => place.isFavourite)
@@ -434,10 +435,20 @@ exports.addSlot = async (req, res) => {
 }
 
 exports.approve = async (req, res) => {
+  if (!req.params.placeId ||
+    !req.params.approvedStatus)
+    return res.status(400).send({ message: 'Missing parameter!' })
+
+  await Place.updateOne({ _id: req.params.placeId }, { $set: { approved: req.params.approvedStatus } })
+
+  return res.status(201).send()
+}
+
+exports.deletePlace = async (req, res) => {
   if (!req.params.placeId)
     return res.status(400).send({ message: 'Missing parameter!' })
 
-  await Place.updateOne({ _id: req.params.placeId }, { $set: { approved: true } })
+  await Place.deleteOne({ _id: req.params.placeId })
 
   return res.status(201).send()
 }
