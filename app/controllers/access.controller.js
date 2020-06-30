@@ -90,27 +90,14 @@ exports.getPlaces = async (req, res) => {
   let types = await PlaceType.find()
   types.map(place => placeTypes.set(place._id, place.name))
 
-  let searchApprovedOnly = !req.query.approved
+  let search = {}
 
-  let placeSearch
-  if (req.query.own) {
-    placeSearch = Place.find({ creatorId: req.params.visitorId})
-  } else {
-    if (req.query.name) {
-      placeSearch = req.query.typeId ? Place.find({
-        placeTypeId: req.query.typeId,
-        'name': new RegExp(`.*${req.query.name}.*`, 'i'),
-        approved: searchApprovedOnly
-      }) : Place.find({ 'name': new RegExp(`.*${req.query.name}.*`, 'i'), approved: searchApprovedOnly })
-    } else {
-      placeSearch = req.query.typeId ? Place.find({
-        placeTypeId: req.query.typeId,
-        approved: searchApprovedOnly
-      }) : Place.find({ approved: searchApprovedOnly })
-    }
-  }
+  if (req.query.typeId) search.placeTypeId = req.query.typeId
+  if (req.query.name) search.name = new RegExp(`.*${req.query.name}.*`, 'i')
+  if (req.query.approved !== undefined) search.approved = req.query.approved
+  if (req.query.own) search.creatorId = req.params.visitorId
 
-  let places = await placeSearch.sort({ name: 1 }).skip(skip).limit(load)
+  let places = await Place.find(search).sort({ name: 1 }).skip(skip).limit(load)
 
   let output = places.map(place => ({
     id: place._id,
