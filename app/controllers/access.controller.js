@@ -94,7 +94,7 @@ exports.getPlaces = async (req, res) => {
 
   if (req.query.typeId) search.placeTypeId = req.query.typeId
   if (req.query.name) search.name = new RegExp(`.*${req.query.name}.*`, 'i')
-  if (req.query.approved !== undefined) search.approved = req.query.approved
+  if (req.query.approved !== undefined) search.approved = req.query.approved === 'true'
   if (req.query.own) search.creatorId = req.params.visitorId
 
   let places = await Place.find(search).sort({ name: 1 }).skip(skip).limit(load)
