@@ -7,8 +7,6 @@ const Place = require('./app/models/place.model')
 
 const migration = require('./app/migrations/dummy.migration')
 
-require('dotenv').config()
-
 // create express app
 const app = express()
 
@@ -20,13 +18,29 @@ app.use(express.json({ limit: '10mb' }))
 app.use(bodyParser.json())
 
 // Configuring the database
-const dbConfig = require('./app/config/database.config.js')
+const config = require('./app/config/config.js')
 const mongoose = require('mongoose')
 
 mongoose.Promise = global.Promise
+const jwt = require('express-jwt')
+
+app.use(
+  jwt({
+    secret: config.accessToken,
+    getToken: getUserToken,
+    algorithms: ['HS256']
+  }))
+
+function getUserToken (req) {
+  if (req.headers.authorization) {
+    let header = req.headers.authorization.split(' ')
+    if (header[0] === 'Bearer' && header.length > 1) return header[1]
+  }
+  return null
+}
 
 // Connecting to the database
-mongoose.connect(dbConfig.url, {
+mongoose.connect(config.url, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useFindAndModify: false
@@ -63,7 +77,6 @@ app.use('/api', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 Place.updateMany({ approved: { $exists: false } }, { approved: true }, function () {})
 
 // listen  for requests
-const PORT = process.env.PORT || 8080
-app.listen(PORT, () => {
-  console.log(`Server is listening on port ${PORT}`)
+app.listen(config.port, () => {
+  console.log(`Server is listening on port ${config.port}`)
 })

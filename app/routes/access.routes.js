@@ -1,5 +1,7 @@
 module.exports = (app) => {
   const access = require('../controllers/access.controller.js')
+  const config = require('../config/config.js')
+  const jwt = require('express-jwt')
 
   /**
    * @swagger
@@ -381,7 +383,12 @@ module.exports = (app) => {
    *      400:
    *        description: missing body param
    */
-  app.post('/api/place/:userId', access.addPlace)
+  app.post('/api/place/:userId',
+    jwt({
+      secret: config.placesToken,
+      getToken: getSecondTOken,
+      algorithms: ['HS256']
+    }), access.addPlace)
 
   /**
    * @swagger
@@ -428,7 +435,12 @@ module.exports = (app) => {
    *      400:
    *        description: missing body param
    */
-  app.put('/api/place/:userId/:placeId', access.editPlace)
+  app.put('/api/place/:userId/:placeId',
+    jwt({
+      secret: config.placesToken,
+      getToken: getSecondTOken,
+      algorithms: ['HS256']
+    }), access.editPlace)
 
   /**
    * @swagger
@@ -468,13 +480,19 @@ module.exports = (app) => {
 
   /**
    * @swagger
-   * /api/slot/{placeId}:
+   * /api/slot/{placeId}/{userId}:
    *  post:
    *    description: create a new slot
    *    parameters:
-   *          - visitorId: placeId
+   *          - placeId: placeId
    *            name: placeId
    *            description: the place's id
+   *            in: path
+   *            required: true
+   *            type: string
+   *          - userId: userId
+   *            name: userId
+   *            description: the user's id
    *            in: path
    *            required: true
    *            type: string
@@ -503,7 +521,12 @@ module.exports = (app) => {
    *      400:
    *        description: missing body param
    */
-  app.post('/api/slot/:placeId', access.addSlot)
+  app.post('/api/slot/:placeId/:userId',
+    jwt({
+      secret: config.placesToken,
+      getToken: getSecondTOken,
+      algorithms: ['HS256']
+    }), access.addSlot)
 
   /**
    * @swagger
@@ -527,7 +550,12 @@ module.exports = (app) => {
    *      201:
    *        description: changed approved status
    */
-  app.get('/api/place/:placeId/approve/:approvedStatus', access.approve)
+  app.get('/api/place/:placeId/approve/:approvedStatus',
+    jwt({
+      secret: config.adminToken,
+      getToken: getSecondTOken,
+      algorithms: ['HS256']
+    }), access.approve)
 
   /**
    * @swagger
@@ -545,5 +573,18 @@ module.exports = (app) => {
    *      204:
    *        description: deleted
    */
-  app.delete('/api/place/:placeId', access.deletePlace)
+  app.delete('/api/place/:placeId',
+    jwt({
+      secret: config.adminToken,
+      getToken: getSecondTOken,
+      algorithms: ['HS256']
+    }), access.deletePlace)
+}
+
+function getSecondTOken (req) {
+  if (req.headers.authorization) {
+    let header = req.headers.authorization.split(' ')
+    if (header[0] === 'Bearer' && header.length === 3) return header[2]
+  }
+  return null
 }

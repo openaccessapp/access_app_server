@@ -402,13 +402,18 @@ exports.addSlot = async (req, res) => {
   if (
     !req.body.type ||
     !req.params.placeId ||
+    !req.params.userId ||
     !req.body.from ||
     !req.body.to ||
     !req.body.maxSlots) {
     return res.status(400).send({ message: 'Missing body parameter!' })
   }
 
-  await new Slot({
+  let place = await Place.findById(req.params.placeId)
+  if (!place) return res.status(404).send({ message: 'Place not found' })
+  if (place.creatorId !== req.params.userId) return res.status(401).send({ message: 'User not creator' })
+
+  new Slot({
     _id: nanoid.nanoid(),
     placeId: req.params.placeId,
     typeId: slotTypes.findByName(req.body.type).id,
