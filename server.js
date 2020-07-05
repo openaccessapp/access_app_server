@@ -23,13 +23,15 @@ const mongoose = require('mongoose')
 
 mongoose.Promise = global.Promise
 const jwt = require('express-jwt')
+const { UnauthorizedError } = require('express-jwt')
 
 app.use(
   jwt({
     secret: config.accessToken,
     getToken: getUserToken,
     algorithms: ['HS256']
-  }))
+  })
+    .unless({path: [/^\/doc(.*)$/]}))
 
 function getUserToken (req) {
   if (req.headers.authorization) {
@@ -54,7 +56,7 @@ mongoose.connect(config.url, {
 migration.fillDatabase()
 
 app.get('/', (req, res) => {
-  res.json({ 'message': 'Welcome to Access App. CHANGEEE.' })
+  res.redirect('/doc')
 })
 
 require('./app/routes/access.routes.js')(app)
@@ -72,9 +74,18 @@ const options = {
   apis: ['./app/routes/**.*'],
 }
 const swaggerSpec = swaggerJSDoc(options)
-app.use('/api', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
 Place.updateMany({ approved: { $exists: false } }, { approved: true }, function () {})
+
+
+app.use(function errorHandler(err, req, res, next) {
+  if (err instanceof UnauthorizedError) return res.status(401).send({message: 'Unauthorised'})
+
+  next();
+
+});
+
 
 // listen  for requests
 app.listen(config.port, () => {
