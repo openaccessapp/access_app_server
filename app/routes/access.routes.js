@@ -568,7 +568,7 @@ module.exports = (app) => {
   /**
    * @swagger
    * /api/user/is-authorised:
-   *  delete:
+   *  get:
    *    description: check if authorised
    *    responses:
    *      201:
