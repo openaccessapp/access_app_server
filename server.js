@@ -31,7 +31,7 @@ app.use(
     getToken: getUserToken,
     algorithms: ['HS256']
   })
-    .unless({path: [/^\/doc(.*)$/]}))
+    .unless({path: [/^\/doc(.*)$/, /^\/api\/image\/(.*)$/]}))
 
 function getUserToken (req) {
   if (req.headers.authorization) {
@@ -81,9 +81,7 @@ Place.updateMany({ approved: { $exists: false } }, { approved: true }, function 
 
 app.use(function errorHandler(err, req, res, next) {
   if (err instanceof UnauthorizedError) return res.status(401).send({message: 'Unauthorised'})
-
   next();
-
 });
 
 
