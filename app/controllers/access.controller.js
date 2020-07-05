@@ -444,3 +444,7 @@ exports.deletePlace = async (req, res) => {
 
   return res.status(201).send()
 }
+
+exports.isAuthorised = async (req, res) => {
+  return res.status(201).send()
+}

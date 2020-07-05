@@ -538,7 +538,7 @@ module.exports = (app) => {
   app.get('/api/place/:placeId/approve/:approvedStatus',
     jwt({
       secret: config.adminToken,
-      getToken: getSecondTOken,
+      getToken: getSecondToken,
       algorithms: ['HS256']
     }), access.approve)
 
@@ -561,12 +561,28 @@ module.exports = (app) => {
   app.delete('/api/place/:placeId',
     jwt({
       secret: config.adminToken,
-      getToken: getSecondTOken,
+      getToken: getSecondToken,
       algorithms: ['HS256']
     }), access.deletePlace)
+
+  /**
+   * @swagger
+   * /api/user/is-authorised:
+   *  delete:
+   *    description: check if authorised
+   *    responses:
+   *      201:
+   *        description: authorised
+   */
+  app.get('/api/user/is-authorised',
+    jwt({
+      secret: config.adminToken,
+      getToken: getSecondToken,
+      algorithms: ['HS256']
+    }), access.isAuthorised)
 }
 
-function getSecondTOken (req) {
+function getSecondToken (req) {
   if (req.headers.authorization) {
     let header = req.headers.authorization.split(' ')
     if (header[0] === 'Bearer' && header.length === 3) return header[2]
