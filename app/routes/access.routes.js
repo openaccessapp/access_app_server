@@ -383,12 +383,7 @@ module.exports = (app) => {
    *      400:
    *        description: missing body param
    */
-  app.post('/api/place/:userId',
-    jwt({
-      secret: config.placesToken,
-      getToken: getSecondTOken,
-      algorithms: ['HS256']
-    }), access.addPlace)
+  app.post('/api/place/:userId', access.addPlace)
 
   /**
    * @swagger
@@ -435,12 +430,7 @@ module.exports = (app) => {
    *      400:
    *        description: missing body param
    */
-  app.put('/api/place/:userId/:placeId',
-    jwt({
-      secret: config.placesToken,
-      getToken: getSecondTOken,
-      algorithms: ['HS256']
-    }), access.editPlace)
+  app.put('/api/place/:userId/:placeId', access.editPlace)
 
   /**
    * @swagger
@@ -521,12 +511,7 @@ module.exports = (app) => {
    *      400:
    *        description: missing body param
    */
-  app.post('/api/slot/:placeId/:userId',
-    jwt({
-      secret: config.placesToken,
-      getToken: getSecondTOken,
-      algorithms: ['HS256']
-    }), access.addSlot)
+  app.post('/api/slot/:placeId/:userId', access.addSlot)
 
   /**
    * @swagger
