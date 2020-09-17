@@ -389,7 +389,7 @@ module.exports = (app) => {
    * @swagger
    * /api/place/{userId}/{placeId}:
    *  put:
-   *    description: create a new place
+   *    description: edit a place
    *    parameters:
    *          - userId: userId
    *            name: userId
@@ -512,6 +512,32 @@ module.exports = (app) => {
    *        description: missing body param
    */
   app.post('/api/slot/:placeId/:userId', access.addSlot)
+
+  /**
+   * @swagger
+   * /api/slot/{slotId}/{userId}:
+   *  delete:
+   *    description: delete slot
+   *    parameters:
+   *          - placeId: slotId
+   *            name: slotId
+   *            description: the slot's id
+   *            in: path
+   *            required: true
+   *            type: string
+   *          - userId: userId
+   *            name: userId
+   *            description: the user's id
+   *            in: path
+   *            required: true
+   *            type: string
+   *    responses:
+   *      201:
+   *        description: created
+   *      400:
+   *        description: missing param
+   */
+  app.delete('/api/slot/:slotId/:userId', access.deleteSlot)
 
   /**
    * @swagger

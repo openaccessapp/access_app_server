@@ -426,6 +426,27 @@ exports.addSlot = async (req, res) => {
   return res.status(201).send()
 }
 
+exports.deleteSlot = async (req, res) => {
+  if (!req.params.slotId ||
+    !req.params.userId) {
+    return res.status(400).send({ message: 'Missing body parameter!' })
+  }
+
+  let slot = await Slot.findOne({ _id: req.params.slotId }).populate({
+    path: 'placeId'
+  })
+
+  if (!slot) return res.status(404).send({message: 'Slot not found'})
+
+  if (slot.placeId.creatorId !== req.params.userId)
+    return res.status(401).send({message: 'User is not the creator'})
+
+  await Booking.deleteMany({slotId: req.params.slotId})
+  await slot.delete()
+
+  return res.status(201).send()
+}
+
 exports.approve = async (req, res) => {
   if (!req.params.placeId ||
     !req.params.approvedStatus)
